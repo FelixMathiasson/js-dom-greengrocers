@@ -1,4 +1,4 @@
-const state = {
+  const state = {
   items: [
     {
       id: "001-beetroot",
@@ -53,3 +53,30 @@ const state = {
   ],
   cart: []
 };
+
+function RenderBobsStore() {
+  const storeItems = document.querySelector('.store--item-list')
+  storeItems.innerHTML = ''
+
+  state.items.forEach(item => {
+    const li = document.createElement('li')
+    const div = document.createElement('div')
+    div.className = 'store--item-icon'
+
+    const image = document.createElement('img')
+    image.src = `assets/icons/${item.id}.svg`;
+    image.alt = item.name
+
+    div.appendChild(image)
+
+    const btn = document.createElement('button')
+    btn.textContent = 'Add to cart'
+    
+    li.appendChild(div)
+    li.appendChild(btn)
+
+    storeItems.appendChild(li)
+  })
+}
+
+RenderBobsStore()
