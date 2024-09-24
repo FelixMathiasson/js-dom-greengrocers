@@ -3,62 +3,75 @@
     {
       id: "001-beetroot",
       name: "beetroot",
-      price: 0.35
+      price: 0.15,
+      type: 1
     },
     {
       id: "002-carrot",
       name: "carrot",
-      price: 0.35
+      price: 0.45,
+      type: 1
     },
     {
       id: "003-apple",
       name: "apple",
-      price: 0.35
+      price: 0.25,
+      type: 2
     },
     {
       id: "004-apricot",
       name: "apricot",
-      price: 0.35
+      price: 0.75,
+      type: 2
     },
     {
       id: "005-avocado",
       name: "avocado",
-      price: 0.35
+      price: 0.32,
+      type: 2
     },
     {
       id: "006-bananas",
       name: "bananas",
-      price: 0.35
+      price: 0.17,
+      type: 2
     },
     {
       id: "007-bell-pepper",
       name: "bell pepper",
-      price: 0.35
+      price: 0.92,
+      type: 1
     },
     {
       id: "008-berry",
       name: "berry",
-      price: 0.35
+      price: 0.10,
+      type: 2
     },
     {
       id: "009-blueberry",
       name: "blueberry",
-      price: 0.35
+      price: 0.02,
+      type: 2
     },
     {
       id: "010-eggplant",
       name: "eggplant",
-      price: 0.35
+      price: 0.42,
+      type: 1
     }
   ],
-  cart: []
+  cart: [],
+  filter: 0,
+  sort: 0
 };
+const filterSort = document.querySelector('.filtersAndSortings');
 
 function RenderBobsStore() {
   const storeItems = document.querySelector('.store--item-list')
   storeItems.innerHTML = ''
 
-  state.items.forEach(item => {
+  FilterSortList().forEach(item => {
     const li = document.createElement('li')
     const div = document.createElement('div')
     div.className = 'store--item-icon'
@@ -73,11 +86,75 @@ function RenderBobsStore() {
     btn.onclick = () => AddItemToCart(item.id)
     btn.textContent = 'Add to cart'
     
+    const p = document.createElement('p');
+    p.textContent = `£${item.price}`;
+
     li.appendChild(div)
     li.appendChild(btn)
+    li.appendChild(p);
 
     storeItems.appendChild(li)
   })
+  
+}
+
+function FilterAndSort() {
+  filterSort.innerHTML = ''
+
+  const div = document.createElement('div')
+  div.className = 'filterSort'
+
+  const filterBtn = document.createElement('btn')
+  filterBtn.className = 'filterBtn'
+  filterBtn.textContent = Filter()
+  filterBtn.onclick = () => FilterToggle()
+
+  const sortBtn = document.createElement('btn')
+  sortBtn.className = 'SortBtn'
+  sortBtn.textContent = Sort()
+  sortBtn.onclick = () => SortToggle()
+
+  filterSort.appendChild(div)
+  filterSort.appendChild(filterBtn)
+  filterSort.appendChild(sortBtn)
+
+  RenderBobsStore()
+}
+
+function Filter() {
+  if (state.filter === 0) {
+    return 'All'
+  } else if (state.filter === 1) {
+    return 'Vegetables'
+  } else if (state.filter === 2) {
+    return 'Fruits'
+  }
+}
+
+function FilterToggle() {
+  state.filter++
+  if(state.filter > 2) {
+    state.filter = 0
+  }
+  FilterAndSort()
+}
+
+function Sort() {
+  if (state.sort === 0) {
+    return 'None'
+  } else if (state.sort === 1) {
+    return 'Price'
+  } else if (state.sort === 2) {
+    return 'Alphabetically'
+  }
+}
+
+function SortToggle() {
+  state.sort++
+  if(state.sort > 2) {
+    state.sort = 0
+  }
+  FilterAndSort()
 }
 
 function AddItemToCart(id) {
@@ -100,7 +177,7 @@ function RenderCart() {
 
     const image = document.createElement('img')
     image.alt = cItem.name;
-    image.className = 'cart--item-icon';
+    //image.className = 'cart--item-icon';
     image.src = `assets/icons/${cItem.id}.svg`;
     
     const p = document.createElement('p')
@@ -128,8 +205,26 @@ function RenderCart() {
     
 
     container.appendChild(li)
+
+    TotalCartUpdate()
   })
-  TotalCartUpdate()
+  // const li = document.createElement('li');
+
+  // // Create a text area to write in
+  // const textarea = document.createElement('textarea');
+  // textarea.className = 'newItemText'
+  // textarea.textContent = 'id: 011,\nname: cucumber,\nprice: 0.23,\ntype: 1';
+
+  // // Create a button to add a new item
+  // const button = document.createElement('button');
+  // button.textContent = 'Add new item';
+  // button.onclick = () => addNewItem(textarea.textContent);
+
+  // li.appendChild(textarea);
+  // li.appendChild(button);
+
+  // store.appendChild(li);
+  
 };
 
 function QuantityIncrease(id) {
@@ -150,6 +245,40 @@ function QuantityDecrease(id) {
 function TotalCartUpdate() {
   const amount = state.cart.reduce((sum, cItem) => sum + cItem.price * cItem.quantity, 0)
   document.querySelector('.total-number').innerText  = '£' + amount.toFixed(2)
+} 
+
+function FilterSortList() {
+  const filerType = state.filter
+  const sortType = state.sort
+  if(filerType === 0) {
+    if(sortType === 0) {
+      return state.items
+    } else if (sortType === 1) {
+      return [...state.items].sort((x, y) => x.price - y.price)
+    } else if (sortType === 2) {
+      return [...state.items].sort((x, y) => x.name.localeCompare(y.name));
+    }
+  } else if(filerType === 1) {
+    if(sortType === 0) {
+      return state.items.filter(i => i.type === 1)
+    } else if (sortType === 1) {
+      return [...state.items.filter(i => i.type === 1)].sort((x, y) => x.price - y.price);
+    } else if (sortType === 2) {
+      return [...state.items.filter(i => i.type === 1)].sort((x, y) => x.name.localeCompare(y.name));
+    }
+  } else if(filerType === 2) {
+    if(sortType === 0) {
+      return state.items.filter(i => i.type === 2)
+    } else if (sortType === 1) {
+      return [...state.items.filter(i => i.type === 2)].sort((x, y) => x.price - y.price);
+    } else if (sortType === 2) {
+      return [...state.items.filter(i => i.type === 2)].sort((x, y) => x.name.localeCompare(y.name));
+    }
+  }
 }
 
-RenderBobsStore()
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  FilterAndSort();
+})
