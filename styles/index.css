@@ -189,18 +189,27 @@ button {
   justify-content: center;
 }
 
-.filterButton {
+.filterBtn {
   width: 100px;
   margin-right: 175px;
+
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  color: #000000;
 }
 
-.sortingButton {
+.SortBtn {
   width: 100px;
   margin-left: 150px;
+
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  color: #000000;
+
 }
 
-.newItemText {
-  height: 105px;
-  width: 150px;
-  margin-bottom: 50px;
+.newItem {
+  height: 100px;
+  width: 200px;
+  margin-bottom: 40px;
 }

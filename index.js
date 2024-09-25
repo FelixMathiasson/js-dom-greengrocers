@@ -95,7 +95,42 @@ function RenderBobsStore() {
 
     storeItems.appendChild(li)
   })
+  const li = document.createElement('li');
+
+  const txt = document.createElement('textarea');
+  txt.className = 'newItem'
+  txt.value = 'id: 011,\nname: Watermelon,\nprice: 1.35,\ntype: 2';
+
+  const btn = document.createElement('button');
+  btn.textContent = 'Add new item to store';
+  btn.onclick = () => AddItem(txt.value);
+
+  li.appendChild(txt);
+  li.appendChild(btn);
+
+  storeItems.appendChild(li);
+}
+
+function AddItem(info) {
   
+  const object = info.split(',\n').reduce((buildingObject, priceTypeValue) => {
+    const [k, v] = priceTypeValue.split(': ').map(item => item.trim())
+    
+    if (k === 'type') {
+      buildingObject[k] = parseInt(v, 10)
+    } else if (k === 'price') {
+      buildingObject[k] = parseFloat(v)
+    } else {
+      buildingObject[k] = v
+    }
+    return buildingObject
+  }, {})
+  if (state.items.find(i => i.id === object.id) != null) {
+    return null
+  }
+  state.items.push(object)
+  
+  RenderBobsStore()
 }
 
 function FilterAndSort() {
@@ -177,7 +212,6 @@ function RenderCart() {
 
     const image = document.createElement('img')
     image.alt = cItem.name;
-    //image.className = 'cart--item-icon';
     image.src = `assets/icons/${cItem.id}.svg`;
     
     const p = document.createElement('p')
@@ -208,23 +242,7 @@ function RenderCart() {
 
     TotalCartUpdate()
   })
-  // const li = document.createElement('li');
 
-  // // Create a text area to write in
-  // const textarea = document.createElement('textarea');
-  // textarea.className = 'newItemText'
-  // textarea.textContent = 'id: 011,\nname: cucumber,\nprice: 0.23,\ntype: 1';
-
-  // // Create a button to add a new item
-  // const button = document.createElement('button');
-  // button.textContent = 'Add new item';
-  // button.onclick = () => addNewItem(textarea.textContent);
-
-  // li.appendChild(textarea);
-  // li.appendChild(button);
-
-  // store.appendChild(li);
-  
 };
 
 function QuantityIncrease(id) {
